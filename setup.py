@@ -28,13 +28,20 @@ else:
 black_system = platform.system().lower()
 black_url = "https://github.com/psf/black"
 black_download_link = f"{black_url}/releases/download/{black_version}/black_{black_system}{black_machine}"
+this_package_url = "https://github.com/jmfernandez/pre-commit_mirrors-binary-black"
+pyinstaller_black_download_link = f"{this_package_url}/releases/download/{black_version}/black_{black_system}{black_machine}"
 
 binary_black_url = "https://github.com/jmfernandez/binary_black"
 
 edir = tempfile.mkdtemp()
 atexit.register(shutil.rmtree, edir)
 the_black_path = os.path.join(edir, "black")
-local_black_binary, headers = urllib.request.urlretrieve(black_download_link, filename=the_black_path)
+try:
+    local_black_binary, headers = urllib.request.urlretrieve(pyinstaller_black_download_link, filename=the_black_path)
+except:
+    print("Falling back to " + black_download_link)
+    # Fallback to the official repo
+    local_black_binary, headers = urllib.request.urlretrieve(black_download_link, filename=the_black_path)
 # Assuring the right permissions
 os.chmod(the_black_path, 0o555)
 
