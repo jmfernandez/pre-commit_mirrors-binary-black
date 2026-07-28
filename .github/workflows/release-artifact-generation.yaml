@@ -1,0 +1,29 @@
+name: release-artifact-generation
+on:
+  workflow_dispatch:
+  release:
+    types: [published]
+
+jobs:
+  release-artifact-generation:
+    runs-on: ubuntu-latest
+    name: Generate binary black on release
+    permissions:
+      packages: write
+      contents: write
+    steps:
+      - uses: actions/checkout@v7
+      - uses: actions/setup-python@v7
+      - name: "Install black and pyinstaller"
+        run: |
+          pip install black==$(<.version.black) pyinstaller
+      - name: "Generate self-container binary black release"
+        run: |
+          pyinstaller -F $(which black)
+          mv dist/black black_linux
+      - name: Upload the artifacts
+        uses: skx/github-action-publish-binaries@release-2.0
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          args: 'black_linux'
