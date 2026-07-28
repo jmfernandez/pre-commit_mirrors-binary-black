@@ -39,7 +39,8 @@ local_black_binary, headers = urllib.request.urlretrieve(black_download_link, fi
 os.chmod(the_black_path, 0o555)
 
 setuptools.setup(
-    name='pre_commit_placeholder_package',
+    # This is needed to replace the dependency on the source black release
+    name='binary-black',
     version=black_version,
     data_files=[
         ("bin", [the_black_path])
